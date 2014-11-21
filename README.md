@@ -1,16 +1,17 @@
-Java Extension for StarUML 2
+JavaScript Extension for StarUML 2
 ============================
 
-This extension for StarUML(http://staruml.io) support to generate Java code from UML model and to reverse Java code to UML model. Install this extension from Extension Manager of StarUML. It is based on Java 1.7 specification.
+This extension for StarUML(http://staruml.io) support to generate JavaScript code from UML model and to reverse JavaScript code to UML model. Install this extension from Extension Manager of StarUML. 
 
-Java Code Generation
+JavaScript Code Generation
 --------------------
 
-1. Click the menu (`Tools > Java > Generate Code...`)
-2. Select a base model (or package) that will be generated to Java.
-3. Select a folder where generated Java source files will be placed.
+1. Click the menu (`Tools > JavaScript > Generate Code...`)
+2. Select a base model (or package) that will be generated to JavaScript.
+3. Select a folder where generated JavaScript source files will be placed.
 
-Belows are the rules to convert from UML model elements to Java source codes.
+<!---
+Belows are the rules to convert from UML model elements to JavaScript source codes.
 
 ### UMLPackage
 
@@ -179,6 +180,6 @@ Belows are the rules to convert from Java source code to UML model elements.
 * JavaDoc comment to Documentation.
 
 
----
+--->
 
 Licensed under the MIT license (see LICENSE file).

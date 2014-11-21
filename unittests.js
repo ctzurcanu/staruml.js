@@ -30,11 +30,11 @@ define(function (require, exports, module) {
         ExtensionUtils  = app.getModule("utils/ExtensionUtils"),
         UML             = app.getModule("uml/UML");
 
-    require("grammar/java7");
+    require("grammar/javascript");
 
-    describe("Java", function () {
+    describe("JavaScript", function () {
 
-        describe("Java Parsing", function () {
+        describe("JavaScript Parsing", function () {
 
             function parse(fileName) {
                 var result = new $.Deferred();

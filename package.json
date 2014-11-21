@@ -1,15 +1,15 @@
 {
-    "name": "staruml.java",
-    "title": "Java",
-    "description": "Java code generation and reverse engineering.",
-    "homepage": "https://github.com/staruml/Java",
-    "issues": "https://github.com/staruml/Java/issues",
-    "keywords": ["java"],
+    "name": "staruml.js",
+    "title": "JavaScript",
+    "description": "JavaScript code generation and reverse engineering.",
+    "homepage": "https://github.com/ctzurcanu/staruml.js",
+    "issues": "https://github.com/ctzurcanu/staruml.js/issues",
+    "keywords": ["javascript"],
     "version": "0.9.1",
     "author": {
-        "name": "Minkyu Lee",
-        "email": "niklaus.lee@gmail.com",
-        "url": "https://github.com/niklauslee"
+        "name": "Christian Tzurcanu",
+        "email": "christian.tzurcanu@gmail.com",
+        "url": "https://github.com/ctzurcanu"
     },
     "license": "MIT",
     "engines": {
