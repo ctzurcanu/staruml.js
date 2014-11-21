@@ -41,17 +41,17 @@ define(function (require, exports, module) {
         UML                 = app.getModule("uml/UML");
 
     var CodeGenUtils        = require("CodeGenUtils"),
-        JavaPreferences     = require("JavaPreferences"),
-        JavaCodeGenerator   = require("JavaCodeGenerator"),
-        JavaReverseEngineer = require("JavaReverseEngineer");
+        JavaScriptPreferences     = require("JavaScriptPreferences"),
+        JavaScriptCodeGenerator   = require("JavaScriptCodeGenerator"),
+        JavaScriptReverseEngineer = require("JavaScriptReverseEngineer");
 
     /**
      * Commands IDs
      */
-    var CMD_JAVA           = 'java',
-        CMD_JAVA_GENERATE  = 'java.generate',
-        CMD_JAVA_REVERSE   = 'java.reverse',
-        CMD_JAVA_CONFIGURE = 'java.configure';
+    var CMD_JS           = 'js',
+        CMD_JS_GENERATE  = 'js.generate',
+        CMD_JS_REVERSE   = 'js.reverse',
+        CMD_JS_CONFIGURE = 'js.configure';
 
     /**
      * Command Handler for Java Generate
@@ -65,7 +65,7 @@ define(function (require, exports, module) {
         var result = new $.Deferred();
 
         // If options is not passed, get from preference
-        options = options || JavaPreferences.getGenOptions();
+        options = options || JavaScriptPreferences.getGenOptions();
 
         // If base is not assigned, popup ElementPicker
         if (!base) {
@@ -80,7 +80,7 @@ define(function (require, exports, module) {
                                 if (!err) {
                                     if (files.length > 0) {
                                         path = files[0];
-                                        JavaCodeGenerator.generate(base, path, options).then(result.resolve, result.reject);
+                                        JavaScriptCodeGenerator.generate(base, path, options).then(result.resolve, result.reject);
                                     } else {
                                         result.reject(FileSystem.USER_CANCELED);
                                     }
@@ -89,7 +89,7 @@ define(function (require, exports, module) {
                                 }
                             });
                         } else {
-                            JavaCodeGenerator.generate(base, path, options).then(result.resolve, result.reject);
+                            JavaScriptCodeGenerator.generate(base, path, options).then(result.resolve, result.reject);
                         }
                     } else {
                         result.reject();
@@ -102,7 +102,7 @@ define(function (require, exports, module) {
                     if (!err) {
                         if (files.length > 0) {
                             path = files[0];
-                            JavaCodeGenerator.generate(base, path, options).then(result.resolve, result.reject);
+                            JavaScriptCodeGenerator.generate(base, path, options).then(result.resolve, result.reject);
                         } else {
                             result.reject(FileSystem.USER_CANCELED);
                         }
@@ -111,7 +111,7 @@ define(function (require, exports, module) {
                     }
                 });
             } else {
-                JavaCodeGenerator.generate(base, path, options).then(result.resolve, result.reject);
+                JavaScriptCodeGenerator.generate(base, path, options).then(result.resolve, result.reject);
             }
         }
         return result.promise();
@@ -128,7 +128,7 @@ define(function (require, exports, module) {
         var result = new $.Deferred();
 
         // If options is not passed, get from preference
-        options = JavaPreferences.getRevOptions();
+        options = JavaScriptPreferences.getRevOptions();
 
         // If basePath is not assigned, popup Open Dialog to select a folder
         if (!basePath) {
@@ -136,7 +136,7 @@ define(function (require, exports, module) {
                 if (!err) {
                     if (files.length > 0) {
                         basePath = files[0];
-                        JavaReverseEngineer.analyze(basePath, options).then(result.resolve, result.reject);
+                        JavaScriptReverseEngineer.analyze(basePath, options).then(result.resolve, result.reject);
                     } else {
                         result.reject(FileSystem.USER_CANCELED);
                     }
@@ -153,21 +153,21 @@ define(function (require, exports, module) {
      * Popup PreferenceDialog with Java Preference Schema
      */
     function _handleConfigure() {
-        CommandManager.execute(Commands.FILE_PREFERENCES, JavaPreferences.getId());
+        CommandManager.execute(Commands.FILE_PREFERENCES, JavaScriptPreferences.getId());
     }
 
     // Register Commands
-    CommandManager.register("Java",             CMD_JAVA,           CommandManager.doNothing);
-    CommandManager.register("Generate Code...", CMD_JAVA_GENERATE,  _handleGenerate);
-    CommandManager.register("Reverse Code...",  CMD_JAVA_REVERSE,   _handleReverse);
-    CommandManager.register("Configure...",     CMD_JAVA_CONFIGURE, _handleConfigure);
+    CommandManager.register("JavaScript",             CMD_JS,           CommandManager.doNothing);
+    CommandManager.register("Generate Code...", CMD_JS_GENERATE,  _handleGenerate);
+    CommandManager.register("Reverse Code...",  CMD_JS_REVERSE,   _handleReverse);
+    CommandManager.register("Configure...",     CMD_JS_CONFIGURE, _handleConfigure);
 
     var menu, menuItem;
     menu = MenuManager.getMenu(Commands.TOOLS);
-    menuItem = menu.addMenuItem(CMD_JAVA);
-    menuItem.addMenuItem(CMD_JAVA_GENERATE);
-    menuItem.addMenuItem(CMD_JAVA_REVERSE);
+    menuItem = menu.addMenuItem(CMD_JS);
+    menuItem.addMenuItem(CMD_JS_GENERATE);
+    menuItem.addMenuItem(CMD_JS_REVERSE);
     menuItem.addMenuDivider();
-    menuItem.addMenuItem(CMD_JAVA_CONFIGURE);
+    menuItem.addMenuItem(CMD_JS_CONFIGURE);
 
 });

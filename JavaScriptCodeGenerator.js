@@ -38,13 +38,13 @@ define(function (require, exports, module) {
     var CodeGenUtils = require("CodeGenUtils");
 
     /**
-     * Java Code Generator
+     * JavaScript Code Generator
      * @constructor
      *
      * @param {type.UMLPackage} baseModel
      * @param {string} basePath generated files and directories to be placed
      */
-    function JavaCodeGenerator(baseModel, basePath) {
+    function JavaScriptCodeGenerator(baseModel, basePath) {
 
         /** @member {type.Model} */
         this.baseModel = baseModel;
@@ -59,7 +59,7 @@ define(function (require, exports, module) {
      * @param {Object} options
      * @return {string}
      */
-    JavaCodeGenerator.prototype.getIndentString = function (options) {
+    JavaScriptCodeGenerator.prototype.getIndentString = function (options) {
         if (options.useTab) {
             return "\t";
         } else {
@@ -78,7 +78,7 @@ define(function (require, exports, module) {
      * @param {Object} options
      * @return {$.Promise}
      */
-    JavaCodeGenerator.prototype.generate = function (elem, path, options) {
+    JavaScriptCodeGenerator.prototype.generate = function (elem, path, options) {
         var result = new $.Deferred(),
             self = this,
             fullPath,
@@ -165,7 +165,7 @@ define(function (require, exports, module) {
      * @param {type.Model} elem
      * @return {string}
      */
-    JavaCodeGenerator.prototype.getVisibility = function (elem) {
+    JavaScriptCodeGenerator.prototype.getVisibility = function (elem) {
         switch (elem.visibility) {
         case UML.VK_PUBLIC:
             return "public";
@@ -182,7 +182,7 @@ define(function (require, exports, module) {
      * @param {type.Model} elem
      * @return {Array.<string>}
      */
-    JavaCodeGenerator.prototype.getModifiers = function (elem) {
+    JavaScriptCodeGenerator.prototype.getModifiers = function (elem) {
         var modifiers = [];
         var visibility = this.getVisibility(elem);
         if (visibility) {
@@ -213,7 +213,7 @@ define(function (require, exports, module) {
      * @param {type.Model} elem
      * @return {Array.<type.Model>}
      */
-    JavaCodeGenerator.prototype.getSuperClasses = function (elem) {
+    JavaScriptCodeGenerator.prototype.getSuperClasses = function (elem) {
         var generalizations = Repository.getRelationshipsOf(elem, function (rel) {
             return (rel instanceof type.UMLGeneralization && rel.source === elem);
         });
@@ -225,7 +225,7 @@ define(function (require, exports, module) {
      * @param {type.Model} elem
      * @return {Array.<type.Model>}
      */
-    JavaCodeGenerator.prototype.getSuperInterfaces = function (elem) {
+    JavaScriptCodeGenerator.prototype.getSuperInterfaces = function (elem) {
         var realizations = Repository.getRelationshipsOf(elem, function (rel) {
             return (rel instanceof type.UMLInterfaceRealization && rel.source === elem);
         });
@@ -237,7 +237,7 @@ define(function (require, exports, module) {
      * @param {type.Model} elem
      * @return {string}
      */
-    JavaCodeGenerator.prototype.getType = function (elem) {
+    JavaScriptCodeGenerator.prototype.getType = function (elem) {
         var _type = "void";
         // type name
         if (elem instanceof type.UMLAssociationEnd) {
@@ -272,7 +272,7 @@ define(function (require, exports, module) {
      * @param {string} text
      * @param {Object} options
      */
-    JavaCodeGenerator.prototype.writeDoc = function (codeWriter, text, options) {
+    JavaScriptCodeGenerator.prototype.writeDoc = function (codeWriter, text, options) {
         var i, len, lines;
         if (options.javaDoc && _.isString(text)) {
             lines = text.trim().split("\n");
@@ -290,7 +290,7 @@ define(function (require, exports, module) {
      * @param {type.Model} elem
      * @param {Object} options
      */
-    JavaCodeGenerator.prototype.writePackageDeclaration = function (codeWriter, elem, options) {
+    JavaScriptCodeGenerator.prototype.writePackageDeclaration = function (codeWriter, elem, options) {
         var path = null;
         if (elem._parent) {
             path = _.map(elem._parent.getPath(this.baseModel), function (e) { return e.name; }).join(".");
@@ -306,7 +306,7 @@ define(function (require, exports, module) {
      * @param {type.Model} elem
      * @param {Object} options
      */
-    JavaCodeGenerator.prototype.writeConstructor = function (codeWriter, elem, options) {
+    JavaScriptCodeGenerator.prototype.writeConstructor = function (codeWriter, elem, options) {
         if (elem.name.length > 0) {
             var terms = [];
             // Doc
@@ -328,7 +328,7 @@ define(function (require, exports, module) {
      * @param {type.Model} elem
      * @param {Object} options
      */
-    JavaCodeGenerator.prototype.writeMemberVariable = function (codeWriter, elem, options) {
+    JavaScriptCodeGenerator.prototype.writeMemberVariable = function (codeWriter, elem, options) {
         if (elem.name.length > 0) {
             var terms = [];
             // doc
@@ -358,7 +358,7 @@ define(function (require, exports, module) {
      * @param {boolean} skipBody
      * @param {boolean} skipParams
      */
-    JavaCodeGenerator.prototype.writeMethod = function (codeWriter, elem, options, skipBody, skipParams) {
+    JavaScriptCodeGenerator.prototype.writeMethod = function (codeWriter, elem, options, skipBody, skipParams) {
         if (elem.name.length > 0) {
             var terms = [];
             var params = elem.getNonReturnParameters();
@@ -442,7 +442,7 @@ define(function (require, exports, module) {
      * @param {type.Model} elem
      * @param {Object} options
      */
-    JavaCodeGenerator.prototype.writeClass = function (codeWriter, elem, options) {
+    JavaScriptCodeGenerator.prototype.writeClass = function (codeWriter, elem, options) {
         var i, len, terms = [];
 
         // Doc
@@ -541,7 +541,7 @@ define(function (require, exports, module) {
      * @param {type.Model} elem
      * @param {Object} options
      */
-    JavaCodeGenerator.prototype.writeInterface = function (codeWriter, elem, options) {
+    JavaScriptCodeGenerator.prototype.writeInterface = function (codeWriter, elem, options) {
         var i, len, terms = [];
 
         // Doc
@@ -622,7 +622,7 @@ define(function (require, exports, module) {
      * @param {type.Model} elem
      * @param {Object} options
      */
-    JavaCodeGenerator.prototype.writeEnum = function (codeWriter, elem, options) {
+    JavaScriptCodeGenerator.prototype.writeEnum = function (codeWriter, elem, options) {
         var i, len, terms = [];
         // Doc
         this.writeDoc(codeWriter, elem.documentation, options);
@@ -655,7 +655,7 @@ define(function (require, exports, module) {
      * @param {type.Model} elem
      * @param {Object} options
      */
-    JavaCodeGenerator.prototype.writeAnnotationType = function (codeWriter, elem, options) {
+    JavaScriptCodeGenerator.prototype.writeAnnotationType = function (codeWriter, elem, options) {
         var i, len, terms = [];
 
         // Doc
@@ -725,8 +725,8 @@ define(function (require, exports, module) {
      */
     function generate(baseModel, basePath, options) {
         var result = new $.Deferred();
-        var javaCodeGenerator = new JavaCodeGenerator(baseModel, basePath);
-        return javaCodeGenerator.generate(baseModel, basePath, options);
+        var javaScriptCodeGenerator = new JavaScriptCodeGenerator(baseModel, basePath);
+        return javaScriptCodeGenerator.generate(baseModel, basePath, options);
     }
 
     exports.generate = generate;

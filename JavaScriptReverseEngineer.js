@@ -36,10 +36,10 @@ define(function (require, exports, module) {
         FileUtils       = app.getModule("file/FileUtils"),
         Async           = app.getModule("utils/Async");
 
-    require("grammar/java7");
+    require("grammar/javascript");
 
     // Java Primitive Types
-    var javaPrimitiveTypes = [
+    var jsPrimitiveTypes = [
         "void",
         "byte",
         "short",
@@ -68,7 +68,7 @@ define(function (require, exports, module) {
     ];
 
     // Java Collection Types
-    var javaCollectionTypes = [
+    var jsCollectionTypes = [
         "Collection",
         "Set",
         "SortedSet",
@@ -85,17 +85,17 @@ define(function (require, exports, module) {
     ];
 
     // Java Collection Types (full names)
-    var javaUtilCollectionTypes = _.map(javaCollectionTypes, function (c) { return "java.util." + c; });
+    var jsUtilCollectionTypes = _.map(javaScriptCollectionTypes, function (c) { return "java.util." + c; });
 
     /**
      * Java Code Analyzer
      * @constructor
      */
-    function JavaCodeAnalyzer() {
+    function JavaScriptCodeAnalyzer() {
 
         /** @member {type.UMLModel} */
         this._root = new type.UMLModel();
-        this._root.name = "JavaReverse";
+        this._root.name = "JavaScriptReverse";
 
         /** @member {Array.<File>} */
         this._files = [];
@@ -133,7 +133,7 @@ define(function (require, exports, module) {
      * Add File to Reverse Engineer
      * @param {File} file
      */
-    JavaCodeAnalyzer.prototype.addFile = function (file) {
+    JavaScriptCodeAnalyzer.prototype.addFile = function (file) {
         this._files.push(file);
     };
 
@@ -142,7 +142,7 @@ define(function (require, exports, module) {
      * @param {Object} options
      * @return {$.Promise}
      */
-    JavaCodeAnalyzer.prototype.analyze = function (options) {
+    JavaScriptCodeAnalyzer.prototype.analyze = function (options) {
         var self = this,
             promise;
 
@@ -165,7 +165,7 @@ define(function (require, exports, module) {
         // Generate Diagrams
         promise.always(function () {
             self.generateDiagrams(options);
-            console.log("[Java] done.");
+            console.log("[JavaScript] done.");
         });
 
         return promise;
@@ -179,20 +179,20 @@ define(function (require, exports, module) {
      * @param {Object} options
      * @return {$.Promise}
      */
-    JavaCodeAnalyzer.prototype.performFirstPhase = function (options) {
+    JavaScriptCodeAnalyzer.prototype.performFirstPhase = function (options) {
         var self = this;
         return Async.doSequentially(this._files, function (file) {
             var result = new $.Deferred();
             file.read({}, function (err, data, stat) {
                 if (!err) {
                     try {
-                        var ast = java7.parse(data);
+                        var ast = javascript.parse(data);
                         self._currentCompilationUnit = ast;
                         self._currentCompilationUnit.file = file;
                         self.translateCompilationUnit(options, self._root, ast);
                         result.resolve();
                     } catch (ex) {
-                        console.error("[Java] Failed to parse - " + file._name);
+                        console.error("[JavaScript] Failed to parse - " + file._name);
                         result.reject(ex);
                     }
                 } else {
@@ -212,7 +212,7 @@ define(function (require, exports, module) {
      *
      * @param {Object} options
      */
-    JavaCodeAnalyzer.prototype.performSecondPhase = function (options) {
+    JavaScriptCodeAnalyzer.prototype.performSecondPhase = function (options) {
         var i, len, j, len2, _typeName, _type, _itemTypeName, _itemType, _pathName;
 
         // Create Generalizations
@@ -356,7 +356,7 @@ define(function (require, exports, module) {
                 }
 
                 // if type is primitive type
-                if (_.contains(javaPrimitiveTypes, _typeName)) {
+                if (_.contains(javaScriptPrimitiveTypes, _typeName)) {
                     _typedFeature.feature.type = _typeName;
                 // otherwise
                 } else {
@@ -381,7 +381,7 @@ define(function (require, exports, module) {
      * Generate Diagrams (Type Hierarchy, Package Structure, Package Overview)
      * @param {Object} options
      */
-    JavaCodeAnalyzer.prototype.generateDiagrams = function (options) {
+    JavaScriptCodeAnalyzer.prototype.generateDiagrams = function (options) {
         var baseModel = Repository.get(this._root._id);
         if (options.packageStructure) {
             CommandManager.execute("diagramGenerator.packageStructure", baseModel, true);
@@ -403,7 +403,7 @@ define(function (require, exports, module) {
      * @param {string} typeName
      * @return {Array.<string>} pathName
      */
-    JavaCodeAnalyzer.prototype._toPathName = function (typeName) {
+    JavaScriptCodeAnalyzer.prototype._toPathName = function (typeName) {
         var pathName = (typeName.indexOf(".") > 0 ? typeName.trim().split(".") : null);
         if (!pathName) {
             pathName = [ typeName ];
@@ -420,7 +420,7 @@ define(function (require, exports, module) {
      * @param {Object} compilationUnitNode To search type with import statements.
      * @return {type.Model} element correspond to the type.
      */
-    JavaCodeAnalyzer.prototype._findType = function (namespace, type, compilationUnitNode) {
+    JavaScriptCodeAnalyzer.prototype._findType = function (namespace, type, compilationUnitNode) {
         var typeName,
             pathName,
             _type = null;
@@ -484,7 +484,7 @@ define(function (require, exports, module) {
      * @param {Array.<string>} modifiers
      * @return {string} Visibility constants for UML Elements
      */
-    JavaCodeAnalyzer.prototype._getVisibility = function (modifiers) {
+    JavaScriptCodeAnalyzer.prototype._getVisibility = function (modifiers) {
         if (_.contains(modifiers, "public")) {
             return UML.VK_PUBLIC;
         } else if (_.contains(modifiers, "protected")) {
@@ -502,7 +502,7 @@ define(function (require, exports, module) {
      * @param {string} name
      * @param {?} value Value of Tag
      */
-    JavaCodeAnalyzer.prototype._addTag = function (elem, kind, name, value) {
+    JavaScriptCodeAnalyzer.prototype._addTag = function (elem, kind, name, value) {
         var tag = new type.Tag();
         tag._parent = elem;
         tag.name = name;
@@ -534,7 +534,7 @@ define(function (require, exports, module) {
      * @param {Array.<string>} pathNames
      * @return {type.Model} Package element corresponding to the pathNames
      */
-    JavaCodeAnalyzer.prototype._ensurePackage = function (namespace, pathNames) {
+    JavaScriptCodeAnalyzer.prototype._ensurePackage = function (namespace, pathNames) {
         if (pathNames.length > 0) {
             var name = pathNames.shift();
             if (name && name.length > 0) {
@@ -570,7 +570,7 @@ define(function (require, exports, module) {
      * @param {Array.<string>} pathNames
      * @return {type.Model} Class element corresponding to the pathNames
      */
-    JavaCodeAnalyzer.prototype._ensureClass = function (namespace, pathNames) {
+    JavaScriptCodeAnalyzer.prototype._ensureClass = function (namespace, pathNames) {
         if (pathNames.length > 0) {
             var _className = pathNames.pop(),
                 _package = this._ensurePackage(namespace, pathNames),
@@ -593,7 +593,7 @@ define(function (require, exports, module) {
      * @param {Array.<string>} pathNames
      * @return {type.Model} Interface element corresponding to the pathNames
      */
-    JavaCodeAnalyzer.prototype._ensureInterface = function (namespace, pathNames) {
+    JavaScriptCodeAnalyzer.prototype._ensureInterface = function (namespace, pathNames) {
         if (pathNames.length > 0) {
             var _interfaceName = pathNames.pop(),
                 _package = this._ensurePackage(namespace, pathNames),
@@ -615,18 +615,18 @@ define(function (require, exports, module) {
      * @param {Object} typeNode
      * @return {string} Collection item type name
      */
-    JavaCodeAnalyzer.prototype._isGenericCollection = function (typeNode, compilationUnitNode) {
+    JavaScriptCodeAnalyzer.prototype._isGenericCollection = function (typeNode, compilationUnitNode) {
         if (typeNode.qualifiedName.typeParameters && typeNode.qualifiedName.typeParameters.length > 0) {
             var _collectionType = typeNode.qualifiedName.name,
                 _itemType       = typeNode.qualifiedName.typeParameters[0].name;
 
             // Used Full name (e.g. java.util.List)
-            if (_.contains(javaUtilCollectionTypes, _collectionType)) {
+            if (_.contains(javaScriptUtilCollectionTypes, _collectionType)) {
                 return _itemType;
             }
 
             // Used name with imports (e.g. List and import java.util.List or java.util.*)
-            if (_.contains(javaCollectionTypes, _collectionType)) {
+            if (_.contains(javaScriptCollectionTypes, _collectionType)) {
                 if (compilationUnitNode.imports) {
                     var i, len;
                     for (i = 0, len = compilationUnitNode.imports.length; i < len; i++) {
@@ -654,7 +654,7 @@ define(function (require, exports, module) {
      * @param {type.Model} namespace
      * @param {Object} compilationUnitNode
      */
-    JavaCodeAnalyzer.prototype.translateCompilationUnit = function (options, namespace, compilationUnitNode) {
+    JavaScriptCodeAnalyzer.prototype.translateCompilationUnit = function (options, namespace, compilationUnitNode) {
         var _namespace = namespace,
             i,
             len;
@@ -676,7 +676,7 @@ define(function (require, exports, module) {
      * @param {type.Model} namespace
      * @param {Array.<Object>} typeNodeArray
      */
-    JavaCodeAnalyzer.prototype.translateTypes = function (options, namespace, typeNodeArray) {
+    JavaScriptCodeAnalyzer.prototype.translateTypes = function (options, namespace, typeNodeArray) {
         var i, len;
         if (typeNodeArray.length > 0) {
             for (i = 0, len = typeNodeArray.length; i < len; i++) {
@@ -705,7 +705,7 @@ define(function (require, exports, module) {
      * @param {type.Model} namespace
      * @param {Object} compilationUnitNode
      */
-    JavaCodeAnalyzer.prototype.translatePackage = function (options, namespace, packageNode) {
+    JavaScriptCodeAnalyzer.prototype.translatePackage = function (options, namespace, packageNode) {
         if (packageNode && packageNode.qualifiedName && packageNode.qualifiedName.name) {
             var pathNames = packageNode.qualifiedName.name.split(".");
             return this._ensurePackage(namespace, pathNames);
@@ -720,7 +720,7 @@ define(function (require, exports, module) {
      * @param {type.Model} namespace
      * @param {Array.<Object>} memberNodeArray
      */
-    JavaCodeAnalyzer.prototype.translateMembers = function (options, namespace, memberNodeArray) {
+    JavaScriptCodeAnalyzer.prototype.translateMembers = function (options, namespace, memberNodeArray) {
         var i, len;
         if (memberNodeArray.length > 0) {
             for (i = 0, len = memberNodeArray.length; i < len; i++) {
@@ -763,7 +763,7 @@ define(function (require, exports, module) {
      * @param {type.Model} namespace
      * @param {Object} typeParameterNodeArray
      */
-    JavaCodeAnalyzer.prototype.translateTypeParameters = function (options, namespace, typeParameterNodeArray) {
+    JavaScriptCodeAnalyzer.prototype.translateTypeParameters = function (options, namespace, typeParameterNodeArray) {
         if (typeParameterNodeArray) {
             var i, len, _typeParam;
             for (i = 0, len = typeParameterNodeArray.length; i < len; i++) {
@@ -788,7 +788,7 @@ define(function (require, exports, module) {
      * @param {type.Model} namespace
      * @param {Object} compilationUnitNode
      */
-    JavaCodeAnalyzer.prototype.translateClass = function (options, namespace, classNode) {
+    JavaScriptCodeAnalyzer.prototype.translateClass = function (options, namespace, classNode) {
         var i, len, _class;
 
         // Create Class
@@ -858,7 +858,7 @@ define(function (require, exports, module) {
      * @param {type.Model} namespace
      * @param {Object} interfaceNode
      */
-    JavaCodeAnalyzer.prototype.translateInterface = function (options, namespace, interfaceNode) {
+    JavaScriptCodeAnalyzer.prototype.translateInterface = function (options, namespace, interfaceNode) {
         var i, len, _interface;
 
         // Create Interface
@@ -901,7 +901,7 @@ define(function (require, exports, module) {
      * @param {type.Model} namespace
      * @param {Object} enumNode
      */
-    JavaCodeAnalyzer.prototype.translateEnum = function (options, namespace, enumNode) {
+    JavaScriptCodeAnalyzer.prototype.translateEnum = function (options, namespace, enumNode) {
         var _enum;
 
         // Create Enumeration
@@ -931,7 +931,7 @@ define(function (require, exports, module) {
      * @param {type.Model} namespace
      * @param {Object} annotationTypeNode
      */
-    JavaCodeAnalyzer.prototype.translateAnnotationType = function (options, namespace, annotationTypeNode) {
+    JavaScriptCodeAnalyzer.prototype.translateAnnotationType = function (options, namespace, annotationTypeNode) {
         var _annotationType;
 
         // Create Class <<annotationType>>
@@ -962,7 +962,7 @@ define(function (require, exports, module) {
      * @param {type.Model} namespace
      * @param {Object} fieldNode
      */
-    JavaCodeAnalyzer.prototype.translateFieldAsAssociation = function (options, namespace, fieldNode) {
+    JavaScriptCodeAnalyzer.prototype.translateFieldAsAssociation = function (options, namespace, fieldNode) {
         var i, len;
         if (fieldNode.variables && fieldNode.variables.length > 0) {
             // Add to _associationPendings
@@ -980,7 +980,7 @@ define(function (require, exports, module) {
      * @param {type.Model} namespace
      * @param {Object} fieldNode
      */
-    JavaCodeAnalyzer.prototype.translateFieldAsAttribute = function (options, namespace, fieldNode) {
+    JavaScriptCodeAnalyzer.prototype.translateFieldAsAttribute = function (options, namespace, fieldNode) {
         var i, len;
         if (fieldNode.variables && fieldNode.variables.length > 0) {
             for (i = 0, len = fieldNode.variables.length; i < len; i++) {
@@ -1045,7 +1045,7 @@ define(function (require, exports, module) {
      * @param {Object} methodNode
      * @param {boolean} isConstructor
      */
-    JavaCodeAnalyzer.prototype.translateMethod = function (options, namespace, methodNode, isConstructor) {
+    JavaScriptCodeAnalyzer.prototype.translateMethod = function (options, namespace, methodNode, isConstructor) {
         var i, len,
             _operation = new type.UMLOperation();
         _operation._parent = namespace;
@@ -1135,7 +1135,7 @@ define(function (require, exports, module) {
      * @param {type.Model} namespace
      * @param {Object} enumConstantNode
      */
-    JavaCodeAnalyzer.prototype.translateEnumConstant = function (options, namespace, enumConstantNode) {
+    JavaScriptCodeAnalyzer.prototype.translateEnumConstant = function (options, namespace, enumConstantNode) {
         var _literal = new type.UMLEnumerationLiteral();
         _literal._parent = namespace;
         _literal.name = enumConstantNode.name;
@@ -1155,7 +1155,7 @@ define(function (require, exports, module) {
      * @param {type.Model} namespace
      * @param {Object} parameterNode
      */
-    JavaCodeAnalyzer.prototype.translateParameter = function (options, namespace, parameterNode) {
+    JavaScriptCodeAnalyzer.prototype.translateParameter = function (options, namespace, parameterNode) {
         var _parameter = new type.UMLParameter();
         _parameter._parent = namespace;
         _parameter.name = parameterNode.variable.name;
@@ -1177,13 +1177,13 @@ define(function (require, exports, module) {
      */
     function analyze(basePath, options) {
         var result = new $.Deferred(),
-            javaAnalyzer = new JavaCodeAnalyzer();
+            javaScriptAnalyzer = new JavaScriptCodeAnalyzer();
 
         function visitEntry(entry) {
             if (entry._isFile === true) {
                 var ext = FileUtils.getFileExtension(entry._path);
-                if (ext && ext.toLowerCase() === "java") {
-                    javaAnalyzer.addFile(entry);
+                if (ext && ext.toLowerCase() === "javascript") {
+                    javaScriptAnalyzer.addFile(entry);
                 }
             }
             return true;
@@ -1193,7 +1193,7 @@ define(function (require, exports, module) {
         var dir = FileSystem.getDirectoryForPath(basePath);
         dir.visit(visitEntry, {}, function (err) {
             if (!err) {
-                javaAnalyzer.analyze(options).then(result.resolve, result.reject);
+                javaScriptAnalyzer.analyze(options).then(result.resolve, result.reject);
             } else {
                 result.reject(err);
             }

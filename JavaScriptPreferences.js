@@ -22,60 +22,60 @@ define(function (require, exports, module) {
         Core              = app.getModule("core/Core"),
         PreferenceManager = app.getModule("preference/PreferenceManager");
 
-    var preferenceId = "java";
+    var preferenceId = "javascript";
 
-    var javaPreferences = {
-        "java.gen": {
-            text: "Java Code Generation",
+    var javaScriptPreferences = {
+        "javascript.gen": {
+            text: "JavaScript Code Generation",
             type: "Section"
         },
-        "java.gen.javaDoc": {
-            text: "JavaDoc",
-            description: "Generate JavaDoc comments.",
+        "javascript.gen.jsDoc": {
+            text: "JSDoc",
+            description: "Generate JSDoc comments.",
             type: "Check",
             default: true
         },
-        "java.gen.useTab": {
+        "javascript.gen.useTab": {
             text: "Use Tab",
             description: "Use Tab for indentation instead of spaces.",
             type: "Check",
             default: false
         },
-        "java.gen.indentSpaces": {
+        "javascript.gen.indentSpaces": {
             text: "Indent Spaces",
             description: "Number of spaces for indentation.",
             type: "Number",
             default: 4
         },
-        "java.rev": {
-            text: "Java Reverse Engineering",
+        "javascript.rev": {
+            text: "JavaScript Reverse Engineering",
             type: "Section"
         },
-        "java.rev.association": {
+        "javascript.rev.association": {
             text: "Use Association",
-            description: "Reverse Java Fields as UML Associations.",
+            description: "Reverse JavaScript Fields as UML Associations.",
             type: "Check",
             default: true
         },
-        "java.rev.publicOnly": {
+        "javascript.rev.publicOnly": {
             text: "Public Only",
             description: "Reverse public members only.",
             type: "Check",
             default: false
         },
-        "java.rev.typeHierarchy": {
+        "javascript.rev.typeHierarchy": {
             text: "Type Hierarchy Diagram",
             description: "Create a type hierarchy diagram for all classes and interfaces",
             type: "Check",
             default: true
         },
-        "java.rev.packageOverview": {
+        "javascript.rev.packageOverview": {
             text: "Package Overview Diagram",
             description: "Create overview diagram for each package",
             type: "Check",
             default: true
         },
-        "java.rev.packageStructure": {
+        "javascript.rev.packageStructure": {
             text: "Package Structure Diagram",
             description: "Create a package structure diagram for all packages",
             type: "Check",
@@ -89,24 +89,24 @@ define(function (require, exports, module) {
 
     function getGenOptions() {
         return {
-            javaDoc       : PreferenceManager.get("java.gen.javaDoc"),
-            useTab        : PreferenceManager.get("java.gen.useTab"),
-            indentSpaces  : PreferenceManager.get("java.gen.indentSpaces")
+            JSDoc       : PreferenceManager.get("javascript.gen.jsDoc"),
+            useTab        : PreferenceManager.get("javascript.gen.useTab"),
+            indentSpaces  : PreferenceManager.get("javascript.gen.indentSpaces")
         };
     }
 
     function getRevOptions() {
         return {
-            association      : PreferenceManager.get("java.rev.association"),
-            publicOnly       : PreferenceManager.get("java.rev.publicOnly"),
-            typeHierarchy    : PreferenceManager.get("java.rev.typeHierarchy"),
-            packageOverview  : PreferenceManager.get("java.rev.packageOverview"),
-            packageStructure : PreferenceManager.get("java.rev.packageStructure")
+            association      : PreferenceManager.get("javascript.rev.association"),
+            publicOnly       : PreferenceManager.get("javascript.rev.publicOnly"),
+            typeHierarchy    : PreferenceManager.get("javascript.rev.typeHierarchy"),
+            packageOverview  : PreferenceManager.get("javascript.rev.packageOverview"),
+            packageStructure : PreferenceManager.get("javascript.rev.packageStructure")
         };
     }
 
     AppInit.htmlReady(function () {
-        PreferenceManager.register(preferenceId, "Java", javaPreferences);
+        PreferenceManager.register(preferenceId, "JavaScript", javaScriptPreferences);
     });
 
     exports.getId         = getId;

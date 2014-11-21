@@ -71,7 +71,7 @@
     recoverable: (boolean: TRUE when the parser has a error recovery rule available for this particular error)
   }
 */
-var java7 = (function(){
+var js = (function(){
 var parser = {trace: function trace() {
         Jison.print.apply(null, arguments);
     },
@@ -2433,9 +2433,9 @@ return new Parser;
 
 
 if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
-exports.parser = java7;
-exports.Parser = java7.Parser;
-exports.parse = function () { return java7.parse.apply(java7, arguments); };
+exports.parser = js;
+exports.Parser = js.Parser;
+exports.parse = function () { return js.parse.apply(js, arguments); };
 exports.main = function commonjsMain(args) {
     if (!args[1]) {
         console.log('Usage: '+args[0]+' FILE');
